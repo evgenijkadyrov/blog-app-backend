@@ -10,6 +10,7 @@ import {PostControllers, UserControllers} from "./controllers/index.js"
 import multer from "multer";
 import {authValidation, handleValidationsErrors} from "./utils/index.js"
 import cors from "cors";
+import fs from "fs";
 
 //'mongodb+srv://admin:12345qwerty@cluster0.zkcmcwn.mongodb.net/blog?retryWrites=true&w=majority'
 mongoose.connect(
