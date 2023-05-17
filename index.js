@@ -9,9 +9,11 @@ import {PostControllers, UserControllers} from "./controllers/index.js"
 
 import multer from "multer";
 import {authValidation, handleValidationsErrors} from "./utils/index.js"
+import cors from "cors";
 
-
-mongoose.connect('mongodb+srv://admin:12345qwerty@cluster0.zkcmcwn.mongodb.net/blog?retryWrites=true&w=majority')
+//'mongodb+srv://admin:12345qwerty@cluster0.zkcmcwn.mongodb.net/blog?retryWrites=true&w=majority'
+mongoose.connect(
+    process.env.MongoDb_Uri)
     .then(() => {
         console.log("Db ok")
     })
@@ -59,7 +61,7 @@ const storage = multer.diskStorage({
 const upload = multer({storage: storage})
 app.use(express.json())
 app.use('/uploads', express.static('./uploads'))
-
+app.use(cors())
 
 app.post('/auth/login', loginValidation, handleValidationsErrors, UserControllers.login)
 app.post('/auth/registration', registrationValidation, handleValidationsErrors, UserControllers.register)
@@ -67,8 +69,10 @@ app.get('/auth/me', authValidation, UserControllers.authMe)
 
 app.post('/upload', authValidation, handleValidationsErrors, upload.single('image'), PostControllers.upload)
 
+
 app.post('/posts', authValidation, postCreateValidation, handleValidationsErrors, PostControllers.create)
 app.get('/posts', PostControllers.getAll)
+app.get('/tags', PostControllers.getLastTags)
 app.get('/posts/:id', PostControllers.getOne)
 app.delete('/posts/:id', authValidation, PostControllers.remove)
 app.patch('/posts/:id', authValidation, postCreateValidation, handleValidationsErrors, PostControllers.update)

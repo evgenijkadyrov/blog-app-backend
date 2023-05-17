@@ -1,5 +1,21 @@
 import PostModel from "../models/Posts.js";
 
+export let getLastTags = async (req, res) => {
+    try {
+        const posts = await PostModel.find().limit(5).exec()
+        const tags = posts.map(post => post.tags)
+            .flat()
+            .slice(0, 5)
+
+        res.json(tags)
+
+    } catch (err) {
+        res.stale(500).json({
+            message: " posts not loaded"
+        })
+    }
+};
+
 
 export const create = async (req, res) => {
     try {
@@ -7,7 +23,7 @@ export const create = async (req, res) => {
         const doc = new PostModel({
             title: req.body.title,
             text: req.body.text,
-            tags: req.body.tags,
+            tags: req.body.tags.split(','),
             imageUrl: req.body.imageUrl,
             user: req.userId
         })
@@ -31,6 +47,7 @@ export const getAll = async (req, res) => {
         })
     }
 }
+
 export const getOne = async (req, res) => {
 
     try {
@@ -45,7 +62,7 @@ export const getOne = async (req, res) => {
             {
                 new: true
             },
-        )
+        ).populate('user')
         res.json(post)
     } catch (err) {
         res.status(500).json({
@@ -85,7 +102,7 @@ export const update = async (req, res) => {
             {
                 title: req.body.title,
                 text: req.body.text,
-                tags: req.body.tags,
+                tags: req.body.tags.split(','),
                 imageUrl: req.body.imageUrl,
                 user: req.userId
 
@@ -104,9 +121,9 @@ export const update = async (req, res) => {
         })
     }
 }
-export const upload =async (req,res)=>{
+export const upload = async (req, res) => {
     res.json({
-        url:`/uploads/${req.file.filename}`
+        url: `/uploads/${req.file.filename}`
     })
 
 
