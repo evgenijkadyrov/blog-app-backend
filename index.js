@@ -78,7 +78,7 @@ app.delete('/posts/:id', authValidation, PostControllers.remove)
 app.patch('/posts/:id', authValidation, postCreateValidation, handleValidationsErrors, PostControllers.update)
 
 
-app.listen(4444, (err) => {
+app.listen(process.env.PORT||4444, (err) => {
     if (err) {
         return console.log(err)
     }
